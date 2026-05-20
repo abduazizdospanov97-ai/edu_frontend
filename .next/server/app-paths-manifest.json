@@ -1,0 +1,11 @@
+{
+  "/(dashboard)/dashboard/page": "app/(dashboard)/dashboard/page.js",
+  "/(dashboard)/students/page": "app/(dashboard)/students/page.js",
+  "/(dashboard)/attendance/page": "app/(dashboard)/attendance/page.js",
+  "/(dashboard)/finance/page": "app/(dashboard)/finance/page.js",
+  "/(dashboard)/debtors/page": "app/(dashboard)/debtors/page.js",
+  "/(dashboard)/tests/page": "app/(dashboard)/tests/page.js",
+  "/(dashboard)/schedule/page": "app/(dashboard)/schedule/page.js",
+  "/(dashboard)/settings/page": "app/(dashboard)/settings/page.js",
+  "/(dashboard)/groups/page": "app/(dashboard)/groups/page.js"
+}
