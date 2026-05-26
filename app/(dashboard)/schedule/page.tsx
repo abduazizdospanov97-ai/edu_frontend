@@ -68,14 +68,26 @@ export default function SchedulePage() {
           {DAYS.map(day => (
             <div key={day.short} className="min-h-64">
               <div className="text-center py-2 rounded-xl mb-2 text-sm font-bold"
-                style={day.short === todayShort
+                style={day.short === 'Ya'
+                  ? { background: '#f1f5f9', color: '#94a3b8', border: '1px solid #e2e8f0' }
+                  : day.short === todayShort
                   ? { background: 'var(--primary)', color: '#fff' }
                   : { background: 'var(--bg2)', color: 'var(--text2)', border: '1px solid var(--border)' }}>
                 <p className="text-xs opacity-70 hidden sm:block">{day.full}</p>
                 <p>{day.short}</p>
               </div>
               <div className="space-y-2">
-                {byDay[day.short].map(g => (
+                {day.short === 'Ya' ? (
+                  <div className="p-3 rounded-xl text-center"
+                    style={{ background: '#f1f5f9', border: '1px dashed #cbd5e1' }}>
+                    <p className="text-xs font-semibold" style={{ color: '#94a3b8' }}>Dam olish</p>
+                  </div>
+                ) : byDay[day.short].length === 0 ? (
+                  <div className="p-3 rounded-xl text-center"
+                    style={{ background: 'var(--bg3)', border: '1px dashed var(--border)' }}>
+                    <p className="text-xs" style={{ color: 'var(--text2)' }}>—</p>
+                  </div>
+                ) : byDay[day.short].map(g => (
                   <div key={g.id} className="p-2.5 rounded-xl text-xs"
                     style={{ background: `${COLORS[g.colorIdx]}18`, border: `1px solid ${COLORS[g.colorIdx]}30` }}>
                     <p className="font-bold truncate" style={{ color: COLORS[g.colorIdx] }}>{g.name}</p>
