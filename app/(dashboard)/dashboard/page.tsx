@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import { dashboardApi } from '@/lib/api'
 import Link from 'next/link'
-import { ArrowRight, Loader2 } from 'lucide-react'
+import { ArrowRight, Loader2, GraduationCap, Users, DollarSign, AlertCircle, CheckCircle2, XCircle } from 'lucide-react'
 
 const fmt = (n: number) => {
   if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M'
@@ -60,10 +60,10 @@ export default function DashboardPage() {
   }
 
   const statCards = [
-    { icon: '👨‍🎓', value: stats?.total_students ?? '—', label: 'Jami studentlar', color: 'primary' },
-    { icon: '👥', value: stats?.total_groups ?? '—', label: 'Aktiv guruhlar', color: 'success' },
-    { icon: '💰', value: fmt(stats?.today_income ?? 0), label: 'Bugungi daromad', color: 'warning' },
-    { icon: '⚠️', value: stats?.total_debtors ?? '—', label: 'Qarzdarlar', color: 'danger' },
+    { icon: GraduationCap, value: stats?.total_students ?? '—', label: 'Jami studentlar', color: 'primary' },
+    { icon: Users, value: stats?.total_groups ?? '—', label: 'Aktiv guruhlar', color: 'success' },
+    { icon: DollarSign, value: fmt(stats?.today_income ?? 0), label: 'Bugungi daromad', color: 'warning' },
+    { icon: AlertCircle, value: stats?.total_debtors ?? '—', label: 'Qarzdorlar', color: 'danger' },
   ]
 
   const colorMap: Record<string, string> = {
@@ -78,7 +78,10 @@ export default function DashboardPage() {
         {statCards.map(c => (
           <div key={c.label} className="rounded-2xl p-5"
             style={{ background: 'var(--bg2)', border: '1px solid var(--border)' }}>
-            <div className="text-2xl mb-3">{c.icon}</div>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3"
+              style={{ background: `${colorMap[c.color]}18` }}>
+              <c.icon size={20} style={{ color: colorMap[c.color] }} />
+            </div>
             <p className="text-2xl font-black" style={{ color: colorMap[c.color] }}>{c.value}</p>
             <p className="text-xs mt-1" style={{ color: 'var(--text2)' }}>{c.label}</p>
           </div>
@@ -126,8 +129,12 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between mb-5">
             <h3 className="font-bold" style={{ color: 'var(--text)' }}>Bugungi davomat</h3>
             <div className="flex gap-3 text-sm">
-              <span style={{ color: 'var(--success)' }}>✅ {stats?.attendance?.present || 0} keldi</span>
-              <span style={{ color: 'var(--danger)' }}>❌ {stats?.attendance?.total - stats?.attendance?.present || 0} kelmadi</span>
+              <span className="flex items-center gap-1" style={{ color: 'var(--success)' }}>
+                <CheckCircle2 size={14} /> {stats?.attendance?.present || 0} keldi
+              </span>
+              <span className="flex items-center gap-1" style={{ color: 'var(--danger)' }}>
+                <XCircle size={14} /> {(stats?.attendance?.total - stats?.attendance?.present) || 0} kelmadi
+              </span>
             </div>
           </div>
           <div className="flex items-center gap-8">

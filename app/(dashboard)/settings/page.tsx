@@ -160,8 +160,10 @@ export default function SettingsPage() {
                 return (
                   <div key={r.id} className="flex items-center gap-4 p-4 rounded-2xl"
                     style={{ background: 'var(--bg2)', border: '1px solid var(--border)' }}>
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
-                      style={{ background: 'var(--bg3)' }}>🚪</div>
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                      style={{ background: 'var(--bg3)' }}>
+                      <DoorOpen size={20} style={{ color: 'var(--text2)' }} />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-bold" style={{ color: 'var(--text)' }}>{r.name}</p>
                       <p className="text-xs" style={{ color: 'var(--text2)' }}>{r.floor}-qavat • {r.capacity} joy</p>
