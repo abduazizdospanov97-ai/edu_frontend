@@ -60,10 +60,10 @@ export default function DashboardPage() {
   }
 
   const statCards = [
-    { icon: GraduationCap, value: stats?.total_students ?? '—', label: 'Jami studentlar', color: 'primary' },
-    { icon: Users, value: stats?.total_groups ?? '—', label: 'Aktiv guruhlar', color: 'success' },
-    { icon: DollarSign, value: fmt(stats?.today_income ?? 0), label: 'Bugungi daromad', color: 'warning' },
-    { icon: AlertCircle, value: stats?.total_debtors ?? '—', label: 'Qarzdorlar', color: 'danger' },
+    { icon: GraduationCap, value: stats?.total_students ?? '—', label: 'Jami studentlar', color: 'primary', href: '/students' },
+    { icon: Users, value: stats?.total_groups ?? '—', label: 'Aktiv guruhlar', color: 'success', href: '/groups' },
+    { icon: DollarSign, value: fmt(stats?.today_income ?? 0), label: 'Bugungi daromad', color: 'warning', href: '/finance' },
+    { icon: AlertCircle, value: stats?.total_debtors ?? '—', label: 'Qarzdorlar', color: 'danger', href: '/debtors' },
   ]
 
   const colorMap: Record<string, string> = {
@@ -76,7 +76,8 @@ export default function DashboardPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {statCards.map(c => (
-          <div key={c.label} className="rounded-2xl p-5"
+          <Link key={c.label} href={c.href}
+            className="rounded-2xl p-5 block transition-all hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
             style={{ background: 'var(--bg2)', border: '1px solid var(--border)' }}>
             <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3"
               style={{ background: `${colorMap[c.color]}18` }}>
@@ -84,7 +85,7 @@ export default function DashboardPage() {
             </div>
             <p className="text-2xl font-black" style={{ color: colorMap[c.color] }}>{c.value}</p>
             <p className="text-xs mt-1" style={{ color: 'var(--text2)' }}>{c.label}</p>
-          </div>
+          </Link>
         ))}
       </div>
 

@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { groupsApi } from '@/lib/api'
-import { Loader2, Clock, MapPin, Users, X } from 'lucide-react'
+import { Loader2, Clock, MapPin, Users, X, User } from 'lucide-react'
 
 const DAYS = [
   { short: 'Du', full: 'Dushanba' },
@@ -13,7 +13,9 @@ const DAYS = [
   { short: 'Ya', full: 'Yakshanba' },
 ]
 
-const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EF4444', '#06B6D4', '#F97316']
+const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EF4444', '#06B6D4', '#F97316', '#EC4899']
+
+const fmtTime = (t: string) => t ? t.slice(0, 5) : ''
 
 export default function SchedulePage() {
   const [groups, setGroups] = useState<any[]>([])
@@ -35,6 +37,9 @@ export default function SchedulePage() {
       if (byDay[day]) byDay[day].push({ ...g, colorIdx: idx % COLORS.length })
     })
   })
+  Object.keys(byDay).forEach(k => {
+    byDay[k].sort((a, b) => (a.start_time || '').localeCompare(b.start_time || ''))
+  })
 
   const today = new Date()
   const todayShort = ['Ya', 'Du', 'Se', 'Ch', 'Pa', 'Ju', 'Sha'][today.getDay()]
@@ -52,10 +57,10 @@ export default function SchedulePage() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-black" style={{ color: 'var(--text)' }}>Dars jadvali</h1>
-          <p className="text-sm mt-0.5" style={{ color: 'var(--text2)' }}>
+          <p className="text-sm mt-0.5 flex items-center gap-2" style={{ color: 'var(--text2)' }}>
             {groups.length} ta guruh
             {selectedDay !== 'all' && (
-              <span className="ml-2 text-xs px-2 py-0.5 rounded-full font-semibold inline-flex items-center gap-1"
+              <span className="text-xs px-2 py-0.5 rounded-full font-semibold inline-flex items-center gap-1"
                 style={{ background: 'rgba(59,130,246,0.15)', color: 'var(--primary)' }}>
                 {DAYS.find(d => d.short === selectedDay)?.full}
                 <button onClick={() => setSelectedDay('all')}><X size={11} /></button>
@@ -82,38 +87,37 @@ export default function SchedulePage() {
         </div>
       ) : view === 'week' ? (
         <div className={selectedDay === 'all'
-          ? "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2"
-          : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"}>
+          ? "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3"
+          : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"}>
           {visibleDays.map(day => {
             const isActive = selectedDay === day.short
             const isToday = day.short === todayShort
             const isYa = day.short === 'Ya'
             const count = byDay[day.short].length
             return (
-              <div key={day.short} className="min-h-64">
+              <div key={day.short} className="space-y-2">
                 <button
                   onClick={() => handleDayClick(day.short)}
                   disabled={isYa}
-                  className="w-full text-center py-2 rounded-xl mb-2 text-sm font-bold transition-all disabled:cursor-not-allowed"
+                  className="w-full py-3 px-3 rounded-xl text-sm font-bold transition-all disabled:cursor-not-allowed"
                   style={isActive
-                    ? { background: 'var(--primary)', color: '#fff' }
+                    ? { background: 'var(--primary)', color: '#fff', boxShadow: '0 4px 12px rgba(59,130,246,0.3)' }
                     : isYa
                     ? { background: '#f1f5f9', color: '#94a3b8', border: '1px solid #e2e8f0' }
                     : isToday
-                    ? { background: 'rgba(59,130,246,0.12)', color: 'var(--primary)', border: '1px solid rgba(59,130,246,0.3)' }
+                    ? { background: 'rgba(59,130,246,0.1)', color: 'var(--primary)', border: '1px solid rgba(59,130,246,0.3)' }
                     : { background: 'var(--bg2)', color: 'var(--text2)', border: '1px solid var(--border)' }}>
-                  <p className="text-xs opacity-70 hidden sm:block">{day.full}</p>
-                  <p className="flex items-center justify-center gap-1.5">
-                    {day.short}
+                  <div className="flex items-center justify-between gap-2">
+                    <span>{day.full}</span>
                     {!isYa && (
-                      <span className="text-xs px-1.5 py-0.5 rounded-md font-semibold"
+                      <span className="text-xs px-2 py-0.5 rounded-md font-semibold"
                         style={isActive
                           ? { background: 'rgba(255,255,255,0.25)', color: '#fff' }
                           : { background: 'var(--bg3)', color: 'var(--text2)' }}>
                         {count}
                       </span>
                     )}
-                  </p>
+                  </div>
                 </button>
                 <div className="space-y-2">
                   {isYa ? (
@@ -127,20 +131,33 @@ export default function SchedulePage() {
                       <p className="text-xs" style={{ color: 'var(--text2)' }}>Dars yo'q</p>
                     </div>
                   ) : byDay[day.short].map(g => (
-                    <div key={g.id} className="p-3 rounded-xl"
-                      style={{ background: `${COLORS[g.colorIdx]}18`, border: `1px solid ${COLORS[g.colorIdx]}30` }}>
-                      <p className="font-bold text-sm truncate" style={{ color: COLORS[g.colorIdx] }}>{g.name}</p>
+                    <div key={g.id} className="p-3 rounded-xl space-y-1.5 transition-all hover:shadow-sm"
+                      style={{ background: '#ffffff', border: `1px solid ${COLORS[g.colorIdx]}40`, borderLeft: `3px solid ${COLORS[g.colorIdx]}` }}>
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="font-bold text-sm" style={{ color: COLORS[g.colorIdx] }}>{g.name}</p>
+                        <span className="text-xs px-1.5 py-0.5 rounded-md font-semibold"
+                          style={{ background: `${COLORS[g.colorIdx]}15`, color: COLORS[g.colorIdx] }}>
+                          {fmtTime(g.start_time)}
+                        </span>
+                      </div>
                       {g.course && (
-                        <p className="text-xs mt-0.5 truncate" style={{ color: 'var(--text2)' }}>{g.course.name}</p>
+                        <p className="text-xs truncate" style={{ color: 'var(--text)' }}>{g.course.name}</p>
                       )}
-                      <p className="flex items-center gap-1 mt-1.5 text-xs" style={{ color: 'var(--text2)' }}>
-                        <Clock size={11} />{g.start_time}–{g.end_time}
-                      </p>
-                      {g.room && (
+                      <div className="space-y-0.5 pt-1" style={{ borderTop: '1px dashed var(--border)' }}>
                         <p className="flex items-center gap-1 text-xs" style={{ color: 'var(--text2)' }}>
-                          <MapPin size={11} />{g.room.name}
+                          <Clock size={10} />{fmtTime(g.start_time)}–{fmtTime(g.end_time)}
                         </p>
-                      )}
+                        {g.room && (
+                          <p className="flex items-center gap-1 text-xs" style={{ color: 'var(--text2)' }}>
+                            <MapPin size={10} />{g.room.name}
+                          </p>
+                        )}
+                        {g.teacher && (
+                          <p className="flex items-center gap-1 text-xs truncate" style={{ color: 'var(--text2)' }}>
+                            <User size={10} />{g.teacher.name}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -199,7 +216,7 @@ export default function SchedulePage() {
                           </span>
                         )}
                         <span className="flex items-center gap-1 font-semibold" style={{ color: 'var(--text)' }}>
-                          <Clock size={13} />{g.start_time} — {g.end_time}
+                          <Clock size={13} />{fmtTime(g.start_time)} — {fmtTime(g.end_time)}
                         </span>
                         <span className="flex items-center gap-1">
                           <Users size={13} />{g.student_count || 0}/{g.max_students}
